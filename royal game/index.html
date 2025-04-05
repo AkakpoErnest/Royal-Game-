@@ -3,105 +3,189 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BB-CLUB Portal</title>
+    <title>Royal Rumble</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-      }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   </head>
   <body class="bg-gray-900 text-white font-sans">
 
     <!-- HERO SECTION -->
     <section class="text-center py-20">
-      <h1 class="text-5xl font-bold mb-4 animate-pulse">🔥 Welcome to BB-CLUB</h1>
-      <p class="text-lg mb-6">Blockchain. Brotherhood. Battle.</p>
-      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition rounded-xl shadow-md">Enter the Portal</button>
+      <h1 class="text-5xl font-bold mb-4 animate-pulse">👑 Royal Rumble</h1>
+      <p class="text-lg mb-6">Enter the blockchain arena. Choose your champion. Battle your friends.</p>
+      <button id="connectBtn" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition rounded-xl shadow-md">
+        Connect Wallet
+      </button>
+      <p id="walletAddress" class="mt-4 text-green-400 text-sm"></p>
+      <p id="xpDisplay" class="mt-4 text-yellow-300 text-lg font-mono"></p>
     </section>
 
     <!-- TEAM SECTION -->
     <section class="px-6 py-12 bg-gray-800">
-      <h2 class="text-3xl font-bold mb-8 text-center">⚔️ Meet the Guild</h2>
+      <h2 class="text-3xl font-bold mb-8 text-center">⚔️ Choose Your Champion</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        <!-- CARD 1 -->
-        <div class="bg-gray-700 rounded-2xl p-6 shadow-xl hover:scale-105 transition-transform duration-300">
-          <h3 class="text-xl font-semibold mb-2">🧙 Alice the Founder</h3>
-          <p>Leads the mission. Master of strategy & spells.</p>
+        <div class="bg-gray-700 rounded-2xl p-6 shadow-xl opacity-50 cursor-pointer character-card" data-character="Knight of Ether">
+          <h3 class="text-xl font-semibold mb-2">🛡️ Knight of Ether</h3>
+          <p>Locked until wallet connected.</p>
         </div>
-
-        <!-- CARD 2 -->
-        <div class="bg-gray-700 rounded-2xl p-6 shadow-xl hover:scale-105 transition-transform duration-300">
-          <h3 class="text-xl font-semibold mb-2">💻 Bob the Code Mage</h3>
-          <p>Enchants the system with front-end spells and logic.</p>
+        <div class="bg-gray-700 rounded-2xl p-6 shadow-xl opacity-50 cursor-pointer character-card" data-character="Flame Caster">
+          <h3 class="text-xl font-semibold mb-2">🔥 Flame Caster</h3>
+          <p>Locked until wallet connected.</p>
         </div>
-
-        <!-- CARD 3 -->
-        <div class="bg-gray-700 rounded-2xl p-6 shadow-xl hover:scale-105 transition-transform duration-300">
-          <h3 class="text-xl font-semibold mb-2">🎙️ Charlie the Voice</h3>
-          <p>Podcast host and lore keeper.</p>
+        <div class="bg-gray-700 rounded-2xl p-6 shadow-xl opacity-50 cursor-pointer character-card" data-character="Shadow Hacker">
+          <h3 class="text-xl font-semibold mb-2">🌀 Shadow Hacker</h3>
+          <p>Locked until wallet connected.</p>
         </div>
       </div>
+      <p id="selectedCharacter" class="text-center mt-6 text-xl text-indigo-400"></p>
     </section>
 
+     <!-- Challenge Section -->
+    <section class="px-6 py-12 bg-gray-900 border-t border-gray-800">
+        <h2 class="text-3xl font-bold mb-8 text-center">🎯 Challenge a Player</h2>
+        <div class="max-w-xl mx-auto space-y-4">
+          <div class="flex justify-between items-center bg-gray-800 p-4 rounded-xl shadow">
+            <span class="text-lg">0x123...456</span>
+            <button class="challenge-btn bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white">Challenge</button>
+          </div>
+          <div class="flex justify-between items-center bg-gray-800 p-4 rounded-xl shadow">
+            <span class="text-lg">0xabc...789</span>
+            <button class="challenge-btn bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white">Challenge</button>
+          </div>
+          <div class="flex justify-between items-center bg-gray-800 p-4 rounded-xl shadow">
+            <span class="text-lg">0xdef...001</span>
+            <button class="challenge-btn bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white">Challenge</button>
+          </div>
+
+          <section class="px-6 py-12 bg-gray-800 text-center">
+            <h2 class="text-2xl font-bold mb-4">🥊 Battle Result</h2>
+            <div id="battleResult" class="text-xl text-yellow-400 font-mono animate-pulse">No battle yet.</div>
+          </section>
+
+        </div>
+      </section>
     <!-- FOOTER -->
     <footer class="text-center py-6 bg-gray-900 border-t border-gray-700 mt-12">
-      <p class="text-sm text-gray-400">&copy; 2025 BB-CLUB. All rights reserved.</p>
+      <p class="text-sm text-gray-400">&copy; 2025 Royal Rumble. All rights reserved.</p>
     </footer>
 
-  </body>
-</html>
-<!DOCTYPE html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BB-CLUB Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+       <!-- VS SCREEN OVERLAY -->
+<div id="vsScreen" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+    <div class="text-center">
+      <h2 class="text-4xl font-bold text-white mb-4">⚔️ Battle!</h2>
+      <p id="vsNames" class="text-2xl text-yellow-300 font-mono animate-pulse"></p>
+    </div>
+
+    <!-- WALLET CONNECT SCRIPT -->
     <script>
-      tailwind.config = {
-        darkMode: 'class',
+      
+  const connectBtn = document.getElementById('connectBtn');
+  const walletAddress = document.getElementById('walletAddress');
+
+  async function connectWallet() {
+    if (typeof window.ethereum !== 'undefined') {
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const userAddress = await signer.getAddress();
+        walletAddress.textContent = `Connected: ${userAddress}`;
+        connectBtn.textContent = 'Wallet Connected';
+        connectBtn.disabled = true;
+
+        // Enable character cards
+        const cards = document.querySelectorAll('.character-card');
+        cards.forEach(card => card.classList.remove('opacity-50'));
+      } catch (error) {
+        walletAddress.textContent = 'Connection failed. Please try again.';
+        console.error(error);
       }
+    } else {
+      alert('MetaMask not detected. Please install it!');
+    }
+  }
+
+  connectBtn.addEventListener('click', connectWallet);
+
+      // CHARACTER SELECTION SCRIPT
+      const cards = document.querySelectorAll('.character-card');
+      let selectedCard = null;
+
+      function selectCard(card) {
+        if (selectedCard) {
+          selectedCard.classList.remove('ring-4', 'ring-indigo-500');
+        }
+
+        card.classList.add('ring-4', 'ring-indigo-500');
+        selectedCard = card;
+
+        const characterName = card.dataset.character;
+        localStorage.setItem('selectedCharacter', characterName);
+        document.getElementById('selectedCharacter').textContent = `🧙 You chose: ${characterName}`;
+      }
+
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          if (!connectBtn.disabled) return; // Only allow selection if wallet is connected
+          selectCard(card);
+        });
+      });
+
+
+// CHALLENGE POPUP LOGIC + BATTLE RESULT
+const challengeButtons = document.querySelectorAll('.challenge-btn');
+const battleResult = document.getElementById('battleResult');
+const vsScreen = document.getElementById('vsScreen');
+const vsNames = document.getElementById('vsNames');
+
+challengeButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const opponent = btn.parentElement.querySelector('span').textContent;
+    const character = localStorage.getItem('selectedCharacter') || 'Your Champion';
+
+    // Show VS screen
+    vsNames.textContent = `${character} vs ${opponent}`;
+    vsScreen.classList.remove('hidden');
+
+    // Delay result for dramatic effect
+    setTimeout(() => {
+        const win = Math.random() < 0.5;
+const outcome = win ? '🏆 You Win!' : '💀 You Lose!';
+battleResult.textContent = `You challenged ${opponent}... ${outcome}`;
+battleResult.classList.add('animate-bounce');
+vsScreen.classList.add('hidden');
+
+if (win) {
+  xp += 1;
+  localStorage.setItem('xp', xp);
+  updateXPDisplay();
+}
+      battleResult.textContent = `You challenged ${opponent}... ${outcome}`;
+      battleResult.classList.add('animate-bounce');
+      vsScreen.classList.add('hidden');
+    }, 2500);
+
+    // Reset bounce
+    setTimeout(() => {
+      battleResult.classList.remove('animate-bounce');
+    }, 4000);
+  });
+});
+
+// XP TRACKING
+let xp = parseInt(localStorage.getItem('xp') || '0');
+const xpDisplay = document.getElementById('xpDisplay');
+
+function updateXPDisplay() {
+  xpDisplay.textContent = `🏅 Win Streak XP: ${xp}`;
+}
+
+updateXPDisplay(); // Initialize on page load
     </script>
-  </head>
-  <body class="bg-gray-900 text-white font-sans">
 
-    <!-- HERO SECTION -->
-    <section class="text-center py-20">
-      <h1 class="text-5xl font-bold mb-4 animate-pulse">🔥 Welcome to BB-CLUB</h1>
-      <p class="text-lg mb-6">Blockchain. Brotherhood. Battle.</p>
-      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition rounded-xl shadow-md">Enter the Portal</button>
-    </section>
-
-    <!-- TEAM SECTION -->
-    <section class="px-6 py-12 bg-gray-800">
-      <h2 class="text-3xl font-bold mb-8 text-center">⚔️ Meet the Guild</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        <!-- CARD 1 -->
-        <div class="bg-gray-700 rounded-2xl p-6 shadow-xl hover:scale-105 transition-transform duration-300">
-          <h3 class="text-xl font-semibold mb-2">🧙 Alice the Founder</h3>
-          <p>Leads the mission. Master of strategy & spells.</p>
-        </div>
-
-        <!-- CARD 2 -->
-        <div class="bg-gray-700 rounded-2xl p-6 shadow-xl hover:scale-105 transition-transform duration-300">
-          <h3 class="text-xl font-semibold mb-2">💻 Bob the Code Mage</h3>
-          <p>Enchants the system with front-end spells and logic.</p>
-        </div>
-
-        <!-- CARD 3 -->
-        <div class="bg-gray-700 rounded-2xl p-6 shadow-xl hover:scale-105 transition-transform duration-300">
-          <h3 class="text-xl font-semibold mb-2">🎙️ Charlie the Voice</h3>
-          <p>Podcast host and lore keeper.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- FOOTER -->
-     
-    <footer class="text-center py-6 bg-gray-900 border-t border-gray-700 mt-12">
-      <p class="text-sm text-gray-400">&copy; 2025 BB-CLUB. All rights reserved.</p>
-    </footer>
+   
+ 
+</div>
 
   </body>
 </html>
