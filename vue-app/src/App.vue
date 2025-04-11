@@ -6,8 +6,4 @@ import GamePage from './components/GamePage.vue'
   <GamePage />
 </template>
 
-<style>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-</style>
+<style src="./assets/main.css"></style>

@@ -2,10 +2,17 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{vue,js,ts,jsx,tsx}",
+    "./src/**/*.{vue,js,ts,jsx,tsx}"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#6366f1', // indigo-500
+      }
+    },
   },
   plugins: [],
+  corePlugins: {
+    preflight: true,
+  }
 }
