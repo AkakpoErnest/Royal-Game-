@@ -185,7 +185,7 @@ export default {
           {
             headers: {
               'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-              'x-rapidapi-key': 'YOUR_API_KEY' // TODO: Replace with actual API key
+              'x-rapidapi-key': 'api_key_here' // TODO: Replace with actual API key
             },
             params: {
               live: 'all'
@@ -213,6 +213,9 @@ export default {
       characters,
       opponents,
       battleResult,
+      fixtures,         // Added here
+      fixturesLoading,  // Added here
+      fixturesError,    // Added here
       connectWallet,
       selectCharacter,
       handleChallenge,
