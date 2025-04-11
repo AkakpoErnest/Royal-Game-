@@ -40,27 +40,50 @@
 
     <!-- CHALLENGE SECTION -->
     <section class="px-6 py-12 bg-gray-900 border-t border-gray-800">
-      <h2 class="text-3xl font-bold mb-8 text-center">🎯 Challenge a Player</h2>
-      <div class="max-w-xl mx-auto space-y-4">
+      <h2 class="text-3xl font-bold mb-8 text-center">⚽ Live Fixtures</h2>
+      
+      <div v-if="fixturesLoading" class="text-center py-8">
+        <p class="text-xl animate-pulse">Loading fixtures...</p>
+      </div>
+      
+      <div v-else-if="fixturesError" class="text-center py-8 text-red-500">
+        <p>Error loading fixtures: {{ fixturesError.message }}</p>
+      </div>
+      
+      <div v-else class="max-w-3xl mx-auto space-y-4">
         <div 
-          v-for="(player, index) in opponents" 
-          :key="index"
-          class="flex justify-between items-center bg-gray-800 p-4 rounded-xl shadow"
+          v-for="fixture in fixtures"
+          :key="fixture.fixture.id"
+          class="bg-gray-800 p-6 rounded-xl shadow-lg"
         >
-          <span class="text-lg">{{ shortenAddress(player.address) }}</span>
+          <div class="flex justify-between items-center mb-4">
+            <div class="text-center flex-1">
+              <h3 class="text-xl font-bold">{{ fixture.teams.home.name }}</h3>
+              <p class="text-sm text-gray-400">Home</p>
+            </div>
+            <div class="text-center mx-4">
+              <p class="text-2xl font-bold">vs</p>
+              <p class="text-sm">{{ new Date(fixture.fixture.date).toLocaleTimeString() }}</p>
+            </div>
+            <div class="text-center flex-1">
+              <h3 class="text-xl font-bold">{{ fixture.teams.away.name }}</h3>
+              <p class="text-sm text-gray-400">Away</p>
+            </div>
+          </div>
+          
           <button 
-            @click="handleChallenge(player)"
-            class="challenge-btn bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white"
+            @click="handleChallenge(fixture)"
+            class="w-full challenge-btn bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg text-white font-bold"
             :disabled="!walletConnected || !selectedCharacter"
           >
-            Challenge
+            Challenge This Match
           </button>
         </div>
 
-        <section class="px-6 py-12 bg-gray-800 text-center">
+        <section v-if="battleResult" class="px-6 py-8 bg-gray-800 rounded-xl text-center mt-8">
           <h2 class="text-2xl font-bold mb-4">🥊 Battle Result</h2>
           <div class="text-xl text-yellow-400 font-mono animate-pulse">
-            {{ battleResult || 'No battle yet.' }}
+            {{ battleResult }}
           </div>
         </section>
       </div>
@@ -69,8 +92,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { ethers } from 'ethers';
+import axios from 'axios';
 
 export default {
   setup() {
@@ -79,6 +103,9 @@ export default {
     const xp = ref(0);
     const selectedCharacter = ref(null);
     const battleResult = ref('');
+    const fixtures = ref([]);
+    const fixturesLoading = ref(false);
+    const fixturesError = ref(null);
     
     const characters = [
       { name: 'Knight of Ether', emoji: '🛡️' },
@@ -86,27 +113,25 @@ export default {
       { name: 'Shadow Hacker', emoji: '🌀' }
     ];
 
-    const opponents = ref([
-      { address: '0x1234567890123456789012345678901234567890' },
-      { address: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' },
-      { address: '0xdef0123456789abcdef0123456789abcdef0123' }
-    ]);
+    const opponents = ref([]); // Removed mock data since we're using fixtures now
 
     function shortenAddress(address) {
       return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
 
-    function handleChallenge(opponent) {
+    function handleChallenge(fixture) {
       if (!walletConnected.value || !selectedCharacter.value) return;
       
-      battleResult.value = '⚔️ Battle in progress...';
+      battleResult.value = `⚽ Preparing challenge for ${fixture.teams.home.name} vs ${fixture.teams.away.name}...`;
       
       // Simulate battle outcome after delay
       setTimeout(() => {
         const outcomes = [
-          `🏆 You defeated ${shortenAddress(opponent.address)}!`,
-          `💀 You were defeated by ${shortenAddress(opponent.address)}!`,
-          `🤝 Draw against ${shortenAddress(opponent.address)}!`
+          `🏆 ${selectedCharacter.value.name} won betting on ${fixture.teams.home.name}!`,
+          `🏆 ${selectedCharacter.value.name} won betting on ${fixture.teams.away.name}!`,
+          `💀 ${selectedCharacter.value.name} lost betting on ${fixture.teams.home.name}!`,
+          `💀 ${selectedCharacter.value.name} lost betting on ${fixture.teams.away.name}!`,
+          `🤝 Match ended in a draw!`
         ];
         battleResult.value = outcomes[Math.floor(Math.random() * outcomes.length)];
         
@@ -150,6 +175,35 @@ export default {
       if (!walletConnected.value) return;
       selectedCharacter.value = character;
     }
+
+    async function fetchFixtures() {
+      fixturesLoading.value = true;
+      fixturesError.value = null;
+      try {
+        const response = await axios.get(
+          'https://api-football-v1.p.rapidapi.com/v3/fixtures',
+          {
+            headers: {
+              'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
+              'x-rapidapi-key': 'YOUR_API_KEY' // TODO: Replace with actual API key
+            },
+            params: {
+              live: 'all'
+            }
+          }
+        );
+        fixtures.value = response.data.response;
+      } catch (error) {
+        fixturesError.value = error;
+        console.error('Error fetching fixtures:', error);
+      } finally {
+        fixturesLoading.value = false;
+      }
+    }
+
+    onMounted(() => {
+      fetchFixtures();
+    });
 
     return {
       walletConnected,
