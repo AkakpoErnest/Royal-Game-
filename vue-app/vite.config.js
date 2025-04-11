@@ -15,12 +15,7 @@ export default defineConfig({
     },
   },
   css: {
-    postcss: false,
-    modules: false,
-    preprocessorOptions: {
-      css: {
-        additionalData: `@import "@/assets/main.css";`
-      }
-    }
+    postcss: true, // Enable PostCSS processing
+    modules: false
   }
 })
